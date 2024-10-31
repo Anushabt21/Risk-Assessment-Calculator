@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Assessment Calculator</title>
+    <style>
+		body {
+            font-family: Arial, sans-serif;
+            margin: 5px;
+			text-align: center;
+        }
+
+        .buttonContainer {
+            //margin-left: 150px;
+			margin-left: auto;
+			margin-right: auto;
+			max-width: 300px;
+        }
+
+        .buttonContainer label {
+            text-align: center; /* Left align the text */
+        }
+
+        #errorOutput {
+            color: red; /* Error messages will be red */
+        }
+
+		.informative {
+			color: #BCD557;
+			font-size: 2em; /* Heading 1 size */
+		}
+        .low {
+            color: green;
+            font-size: 2em; /* Heading 1 size */
+        }
+
+        .medium {
+            color: #FFA500;
+            font-size: 2em; /* Heading 1 size */
+        }
+
+        .high {
+            color: #FF8000;
+            font-size: 2em; /* Heading 1 size */
+        }
+		
+		.critical {
+            color: red;
+            font-size: 2em; /* Heading 1 size */
+        }
+		
+		
+		.informative_likelihood_impact {
+			color: #BCD557;
+			font-size: 1em; /* Heading 1 size */
+		}
+        .low_likelihood_impact {
+            color: green;
+            font-size: 1em; /* Heading 1 size */
+        }
+
+        .medium_likelihood_impact {
+            color: #FFA500;
+            font-size: 1em; /* Heading 1 size */
+        }
+
+        .high_likelihood_impact {
+            color: #FF8000;
+            font-size: 1em; /* Heading 1 size */
+        }
+		
+		.critical_likelihood_impact {
+            color: red;
+            font-size: 1em; /* Heading 1 size */
+        }
+		
+        .summary {
+            text-align: center; /* Center text for summary */
+            font-weight: bold; /* Bold summary text */
+        }
+
+        .container {
+            display: flex; /* Use flexbox for layout */
+            flex-wrap: wrap; /* Allow wrapping for rows */
+            justify-content: space-between; /* Space between columns */
+        }
+
+        .column {
+            flex: 1; /* Equal width for both columns */
+            min-width: 300px; /* Minimum width for columns */
+            padding: 10px; /* Padding inside columns */
+            box-sizing: border-box; /* Include padding in width calculation */
+            border: 1px solid #ccc; /* Border around columns */
+            margin: 5px; /* Margin between columns */
+        }
+
+        h2 {
+            margin: 5px 0; /* Spacing for headings */
+        }    
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        /* Tooltip text */
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: auto;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 2px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Position the tooltip above the text */
+            left: 50%;
+            margin-left: -80px; /* Center the tooltip */
+            opacity: 0; /* Hide the tooltip */
+            transition: opacity 0.3s;
+            font-size: 0.75em;
+        }
+
+        /* Tooltip arrow */
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%; /* Bottom of the tooltip */
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        /* Show the tooltip when hovering */
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+		
+        input[type="radio"]:checked + .radioLabel.highcheck {
+            background-color: red;
+            color: white; 
+        }
+		
+		input[type="radio"]:checked + .radioLabel.highmedcheck {
+            background-color: #FF8000;
+            color: white; 
+        }
+		
+		input[type="radio"]:checked + .radioLabel.mediumcheck {
+            background-color: #FFA500;
+            color: white; 
+        }
+		
+		input[type="radio"]:checked + .radioLabel.medlowcheck {
+            background-color: #BCD557;
+            color: white; 
+        }
+		
+		input[type="radio"]:checked + .radioLabel.lowcheck {
+            background-color: green;
+            color: white; 
+        }
+		
+        .radioLabel {
+            cursor: pointer; /* Change the cursor to a pointer on hover */
+            border: 1px solid transparent; /* Add a border that will change when selected */
+            display: inline-block; /* Make label block-like */
+            border-radius: 5px; /* Add rounded corners */
+            //padding: 10px; /* Add some padding */
+            transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+            margin: 0.5px; /* Space between labels */
+        }
+
+        /* Hide the default radio buttons */
+        input[type="radio"] {
+            display: none; /* Hide the radio buttons */
+        }
+		
+		.tooltip .highop{
+            background-color: red;
+            color: white; 
+        }
+		
+		.tooltip .highmedop {
+            background-color: #FF8000;
+            color: white; 
+        }
+		
+		.tooltip .mediumop {
+            background-color: #FFA500;
+            color: white; 
+        }
+		
+		.tooltip .medlowop{
+            background-color: #BCD557;
+            color: white; 
+        }
+		
+		.tooltip .lowop {
+            background-color: green;
+            color: white; 
+        }
+		
+		.h4styles{
+			font-size: 1.2em; 
+			padding: 7px; 
+			margin-bottom: 2px; 
+			margin-top: 2px;
+		}
+		
+		.h3styles{
+			text-align: center; 
+			color: white; 
+			background-color: #003366; 
+			padding: 1px; 
+			margin-top: 10px;
+			margin-bottom: 5px
+		}
+		
+		.h2styles{
+			text-align: center; 
+			color: white; 
+			background-color: #696969; 
+			padding: 2px;
+		}
+		
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Risk Assessment Calculator</h1>
+	
+    <div class="container">
+        <div class="column">
+            <h2 class="h2styles">Assess Likelihood</h2>
+            <h3 class="h3styles">Threat Actor Factors</h3>
+            
+			<div class="container">
+                <div class="column">
+                   <h4 class="tooltip h4styles">Skills 
+						<span class="tooltiptext">The technical expertise the threat actor requires to identify and exploit the risk.</span>
+					</h4>
+					<div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Skills" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">Expert Skills</span>
+							<span class="tooltiptext lowop">Deep knowledge of network protocols, cryptography, operating systems. Ability to execute sophisticated attacks, reverse engineer, manipulate systems.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Skills" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Advanced Skills</span>
+							<span class="tooltiptext medlowop">Ability to discover new/unknown vulnerabilities, network and programming skills, custom explot methods and advance tools.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Skills" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Intermediate Skills</span>
+							<span class="tooltiptext mediumop">Knowledge of known vulnerabilities, simple scripts, penetration exploit method is executed using tools.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Skills" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">Basic Skills</span>
+							<span class="tooltiptext highmedop">Some technical skills and commonly used tools are required to exploit the risk.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Skills" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">No Technical Skills</span>
+							<span class="tooltiptext highop">No technical skill is required. Attacks are executed using preset automated tools.</span>
+						</label>
+					</div>
+                </div>
+				
+                <div class="column">
+                   <h4 class="tooltip h4styles">Motive
+						<span class="tooltiptext">The motive for threat actor to exploit the risk based on the level on reward/benefit.</span>
+					</h4>
+                    <div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Motive" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">None</span>
+							<span class="tooltiptext lowop">No intentional incentive to exploit the risk; action is unlikely.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Motive" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Low</span>
+							<span class="tooltiptext medlowop">Minimal personal gain or indirect benefit, such as curiosity or minor advantage.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Motive" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Moderate</span>
+							<span class="tooltiptext mediumop">Noticeable benefit, including financial or reputational gain, but risk is not essential.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Motive" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">High</span>
+							<span class="tooltiptext highmedop">Strong incentive, such as significant financial or strategic gain; attack is intentional.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Motive" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">Critical</span>
+							<span class="tooltiptext highop">Highly driven motivation; critical gain or high-stakes outcome, such as large-scale financial, political, or ideological impact.</span>
+						</label>
+                    </div>
+                </div>
+				
+                <div class="column">
+                  <h4 class="tooltip h4styles">Privileges Required
+						<span class="tooltiptext">The degree of accessibility threat actor requires to exploit the risk.</span>
+				   </h4>
+                    <div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Privileges Required" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">None</span>
+							<span class="tooltiptext lowop">No privileges required; risk can be exploited without system access.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Privileges Required" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Low</span>
+							<span class="tooltiptext medlowop">Minimal access, such as guest or user privileges, is needed for exploitation.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Privileges Required" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Moderate</span>
+							<span class="tooltiptext mediumop">Requires authorized access or specific user role, such as network user privileges.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Privileges Required" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">High</span>
+							<span class="tooltiptext highmedop">Elevated access, such as admin-level or superuser privileges, is required.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Privileges Required" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">Critical</span>
+							<span class="tooltiptext highop">Full control or highly privileged access, such as root or kernel-level, is required for exploitation.</span>
+						</label>
+                    </div>
+                </div>
+				
+                <div class="column">
+                   <h4 class="tooltip h4styles">Attack Vector
+						<span class="tooltiptext">The method and/or location threat actor can exploit the risky component.</span>
+					</h4>
+                    <div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Attack Vector" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">Physical 
+							<span class="tooltiptext lowop">Requires physical access to the target system or hardware to exploit.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Attack Vector" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Local 
+							<span class="tooltiptext medlowop">Requires local access to a device or system within the target's environment.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Attack Vector" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Adjacent 
+							<span class="tooltiptext mediumop">Exploitation possible from an adjacent network, e.g., same wireless network or subnet.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Attack Vector" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">Network 
+							<span class="tooltiptext highmedop">Exploitation can occur across networks; requires network connectivity to target.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Attack Vector" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">Remote 
+							<span class="tooltiptext highop">Can be exploited from any location globally; no direct connectivity required.</span>
+						</label>
+                    </div>
+                </div>
+            </div>
+			
+            <h3 class="h3styles">Vulnerability Factors</h3>
+			<div class="container">
+			
+                <div class="column">
+                   <h4 class="tooltip h4styles">Ease of Discovery
+						<span class="tooltiptext">Vulnerability is present in the component, likelihood that threat actor identifies such a vulnerability.</span>
+					</h4>
+                    <div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Ease of Discovery" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">Impossible</span>
+							<span class="tooltiptext lowop">Vulnerability is virtually undetectable, hidden by nature or design.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Ease of Discovery" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Very Difficult</span>
+							<span class="tooltiptext medlowop">Discovery is highly unlikely without specialized knowledge or tools.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Ease of Discovery" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Difficult</span>
+							<span class="tooltiptext mediumop">Only highly skilled individuals with specific tools may discover it.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Ease of Discovery" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">Moderate</span>
+							<span class="tooltiptext highmedop">Reasonably challenging to find; requires standard investigative tools.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Ease of Discovery" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">Easy</span>
+							<span class="tooltiptext highop">Vulnerability is easily detectable, even with basic tools and skills.</span>
+						</label>
+                    </div>
+                </div>
+				
+                <div class="column">
+                   <h4 class="tooltip h4styles">Ease of Exploit
+						<span class="tooltiptext">The level of effort threat actor requires to exploit the vulnerability, can be combined with expertise required.</span>
+					</h4>
+                    <div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Ease of Exploit" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">Impossible</span>
+							<span class="tooltiptext lowop">Exploitation is practically infeasible, even with extensive resources.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Ease of Exploit" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Very Difficult</span>
+							<span class="tooltiptext medlowop">Extremely challenging to exploit, requires highly sophisticated techniques.</span>
+						</label><br>
+						 <label class="tooltip"><input type="radio" name="Ease of Exploit" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Difficult</span>
+							<span class="tooltiptext mediumop">Exploitation is possible but requires advanced skills and resources.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Ease of Exploit" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">Moderate</span>
+							<span class="tooltiptext highmedop">Exploitation is achievable with intermediate skills or moderate effort.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Ease of Exploit" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">Easy</span>
+							<span class="tooltiptext highop">Simple to exploit, requiring only basic skills or common tools.</span>
+						</label><br>
+                    </div>
+                </div>
+				
+                <div class="column">
+                   <h4 class="tooltip h4styles">Awareness
+						<span class="tooltiptext">Knowledge and understanding about the vulnerability and the exploit methods availability.</span>
+					</h4>
+                    <div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Awareness" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">Unknown</span>
+							<span class="tooltiptext lowop">Vulnerability is unknown or entirely undocumented.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Awareness" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Hidden</span>
+							<span class="tooltiptext medlowop">Limited to a small, controlled group; not publicly discussed.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Awareness" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Limited</span>
+							<span class="tooltiptext mediumop">Known within specific security circles but not widely publicized.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Awareness" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">Public</span>
+							<span class="tooltiptext highmedop">Vulnerability is publicly disclosed or published, widely accessible information.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Awareness" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">Exploited</span>
+							<span class="tooltiptext highop">Actively exploited, with known attacks occurring in the wild.</span>
+						</label>
+                    </div>
+                </div>
+				
+                <div class="column">
+                   <h4 class="tooltip h4styles">Detection
+						<span class="tooltiptext">The ease and possibility with which the intrusion can be identified, if the threat actor successfully exploits the vulnerability.</span>
+					</h4>
+                    <div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Detection" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">Easy- Early detection</span>
+							<span class="tooltiptext lowop">Detected immediately or early through automated alerts or monitoring.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Detection" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Moderate- Logged and Reviewed</span>
+							<span class="tooltiptext medlowop">Logged and reviewed periodically but may go unnoticed briefly.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Detection" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Difficult- Logged</span>
+							<span class="tooltiptext mediumop">Logged but rarely reviewed; detection requires specific investigation.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Detection" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">Very Difficult- Not logged</span>
+							<span class="tooltiptext highmedop">Not actively logged or monitored, detection is highly unlikely.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Detection" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">Impossible- Logs erased</span>
+							<span class="tooltiptext highop">No logs or records; attacker can erase all traces post-exploit.</span>
+						</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+        <div class="column">		
+            <h2 class="h2styles">Assess Impact</h2>
+			<h3 class="h3styles">Technical Impact </h3>
+            <div class="container">
+                <div class="column">
+                   <h4 class="tooltip h4styles">Loss of Confidentiality
+						<span class="tooltiptext">The extent to which the confidential sensitive and critical information can be exposed that can arise from the exploit of the risk.</span>
+					</h4>
+                    <div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Loss of Confidentiality" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">None</span>
+							<span class="tooltiptext lowop">No impact on confidentiality; sensitive information remains entirely secure.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Loss of Confidentiality" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Very Low</span>
+							<span class="tooltiptext medlowop">Minimal, controlled exposure of non-critical information with negligible impact.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Loss of Confidentiality" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Low</span>
+							<span class="tooltiptext mediumop">Limited exposure of sensitive data, but no critical information is disclosed.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Loss of Confidentiality" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">Moderate</span>
+							<span class="tooltiptext highmedop">Noticeable compromise of confidential information, affecting sensitive but not critical data.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Loss of Confidentiality" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">High</span>
+							<span class="tooltiptext highop">Significant disclosure of critical, sensitive information, risking privacy or security breaches.</span>
+						</label>
+                    </div>
+                </div>
+                <div class="column">
+                   <h4 class="tooltip h4styles">Loss of Integrity
+						<span class="tooltiptext">The extent to which accuracy and consistency of the data can be affected that can arise from the exploit of the risk.</span>
+					</h4>
+                    <div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Loss of Integrity" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">None</span>
+							<span class="tooltiptext lowop">No impact on integrity; data remains unaltered and completely accurate.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Loss of Integrity" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Very Low</span>
+							<span class="tooltiptext medlowop">Minor unauthorized changes, with minimal effect on data accuracy or system integrity.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Loss of Integrity" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Low</span>
+							<span class="tooltiptext mediumop">Limited modification of non-critical data, with minimal operational impact.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Loss of Integrity" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">Moderate</span>
+							<span class="tooltiptext highmedop">Noticeable alteration of sensitive data, potentially impacting functionality or trustworthiness.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Loss of Integrity" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">High</span>
+							<span class="tooltiptext highop">Extensive manipulation of critical data or systems, causing severe trust and reliability issues.</span>
+						</label>
+                    </div>
+                </div>
+                <div class="column">
+                   <h4 class="tooltip h4styles">Loss of Availability
+						<span class="tooltiptext">The extent to which the accessibility of data and system can be affected that can arise from the exploit of the risk.</span>
+					</h4>
+                    <div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Loss of Availability" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">None</span>
+							<span class="tooltiptext lowop">No impact on system availability; all services and data remain fully accessible.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Loss of Availability" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Very Low</span>
+							<span class="tooltiptext medlowop">Brief, non-disruptive downtime, with minimal impact on overall functionality.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Loss of Availability" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Low</span>
+							<span class="tooltiptext mediumop">Limited availability impact, with some disruption, but essential functions are accessible.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Loss of Availability" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">Moderate</span>
+							<span class="tooltiptext highmedop">Extended downtime or limited access to critical services, impacting user operations.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Loss of Availability" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">High</span>
+							<span class="tooltiptext highop">Significant unavailability of crucial systems or data, causing severe operational disruption.</span>
+						</label>
+                    </div>
+                </div>
+                <div class="column">
+                   <h4 class="tooltip h4styles">Loss of Accountability
+						<span class="tooltiptext">The extent to which the activities can be traced and recognise the responsible entity that can arise from the exploit of the risk.</span>
+					</h4>
+                    <div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Loss of Reputation" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">None</span>
+							<span class="tooltiptext lowop">No impact; all actions and events are fully logged and attributable.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Loss of Reputation" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Very Low</span>
+							<span class="tooltiptext medlowop">Minor gaps in tracking, with minimal impact on accountability.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Loss of Reputation" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Moderate</span>
+							<span class="tooltiptext mediumop">Limited logging issues, with some risk of untraceable actions but no critical gaps.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Loss of Reputation" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">Moderate</span>
+							<span class="tooltiptext highmedop">Noticeable gaps in tracking, impacting attribution and traceability of certain actions.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Loss of Reputation" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">High</span>
+							<span class="tooltiptext highop">Major accountability loss; extensive gaps in logging, making actions untraceable.</span>
+						</label>
+                    </div>
+                </div>
+            </div>
+            <h3 class="h3styles">Business Impact</h3>
+            <div class="container">
+                <div class="column">
+                   <h4 class="tooltip h4styles">Financial Damage
+						<span class="tooltiptext">The level of economic impact on the organization that can arise from the exploit of the risk.</span>
+					</h4>
+                    <div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Financial Damage" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">None</span>
+							<span class="tooltiptext lowop">No financial impact; no direct or indirect costs incurred.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Financial Damage" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Very Low</span>
+							<span class="tooltiptext medlowop">Minor financial loss, easily absorbed, with negligible business impact.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Financial Damage" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Low</span>
+							<span class="tooltiptext mediumop">Limited financial impact, causing small but manageable losses.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Financial Damage" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">Moderate</span>
+							<span class="tooltiptext highmedop">Noticeable financial loss with a significant impact on budget or revenue.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Financial Damage" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">High</span>
+							<span class="tooltiptext highop">Severe financial damage, affecting profitability or causing substantial financial strain.</span>
+						</label>
+                    </div>
+                </div>
+                <div class="column">
+                   <h4 class="tooltip h4styles">Reputation Damage
+						<span class="tooltiptext">The potential for negative impact on the trust and credibility of the product and organization that can arise from the exploit of the risk.</span>
+					</h4>
+                    <div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Reputation Damage" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">None</span>
+							<span class="tooltiptext lowop">No impact on reputation; public perception and trust remain unaffected.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Reputation Damage" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Very Low</span>
+							<span class="tooltiptext medlowop">Minimal reputation impact, with isolated or negligible public awareness.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Reputation Damage" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Low</span>
+							<span class="tooltiptext mediumop">Limited impact, with minor concerns raised but no lasting damage.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Reputation Damage" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">Moderate</span>
+							<span class="tooltiptext highmedop">Noticeable damage to reputation, affecting customer or stakeholder trust.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Reputation Damage" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">High</span>
+							<span class="tooltiptext highop">Severe reputation harm, potentially causing loss of clients or public trust.</span>
+						</label>
+                    </div>
+                </div>
+                <div class="column">
+                   <h4 class="tooltip h4styles">Non-Compliance
+						<span class="tooltiptext">The potential for violations of regulatory and legal standards that may arise from the risk or from exploitation of the risk.</span>
+					</h4>
+                    <div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Non-Compliance" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">None</span>
+							<span class="tooltiptext lowop">Fully compliant with all regulatory or industry standards; no violations.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Non-Compliance" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Very Low</span>
+							<span class="tooltiptext medlowop">Minor non-compliance with negligible regulatory or legal consequences.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Non-Compliance" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Low</span>
+							<span class="tooltiptext mediumop">Limited non-compliance; may attract minor penalties or corrective actions.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Non-Compliance" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">Moderate</span>
+							<span class="tooltiptext highmedop">Noticeable non-compliance, resulting in significant penalties or corrective mandates.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Non-Compliance" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">High</span>
+							<span class="tooltiptext highop">Severe non-compliance, risking major legal action, fines, or operational restrictions.</span>
+						</label>
+                    </div>
+                </div>
+                <div class="column">
+                  <h4 class="tooltip h4styles">Operational Impact
+						<span class="tooltiptext">The potential disruption to organizational processes and workflows resulting from the exploitation of the risk.</span>
+					</h4>
+                    <div class="buttonContainer">
+                        <label class="tooltip"><input type="radio" name="Operational Impact" value="1" class="valueRadio">
+							<span class="radioLabel lowcheck">None</span>
+							<span class="tooltiptext lowop">No operational impact; all processes function normally.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Operational Impact" value="2" class="valueRadio">
+							<span class="radioLabel medlowcheck">Very Low</span>
+							<span class="tooltiptext medlowop">Minor impact on operations, with brief or negligible disruptions.</span>
+						</label><br>
+						<label class="tooltip"><input type="radio" name="Operational Impact" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Low</span>
+							<span class="tooltiptext mediumop">Limited operational impact, causing minor delays or inefficiencies.</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Operational Impact" value="4" class="valueRadio">
+							<span class="radioLabel highmedcheck">Moderate</span>
+							<span class="tooltiptext highmedop">Noticeable impact on key operations, slowing productivity or causing disruptions</span>
+						</label><br>
+                        <label class="tooltip"><input type="radio" name="Operational Impact" value="5" class="valueRadio">
+							<span class="radioLabel highcheck">High</span>
+							<span class="tooltiptext highop">Severe operational impact, halting critical functions or causing major disruptions.</span>
+						</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="summary">
+        <p id="result"></p>
+        <p id="result2"></p>
+		<p id="result3"></p>
+    </div>
+	
+    <div id="errorOutput"></div>
+
+    <script>
+        function validateForm() {
+            const group1 = [
+                'Skills',
+                'Motive',
+                'Privileges Required',
+                'Attack Vector',
+                'Ease of Discovery',
+                'Ease of Exploit',
+                'Awareness',
+                'Detection'
+			];
+			
+			const group2 = [
+                'Loss of Confidentiality',
+                'Loss of Integrity',
+                'Loss of Availability',
+                'Loss of Reputation',
+                'Financial Damage',
+                'Reputation Damage',
+                'Non-Compliance',
+                'Operational Impact'
+            ];
+
+            let errorMessages = [];
+
+            group1.forEach(group => {
+                const radios = document.getElementsByName(group);
+                const isChecked = Array.from(radios).some(radio => radio.checked);
+                if (!isChecked) {
+                    errorMessages.push(`Please select a value for "${group}".`);
+                }
+            });
+			
+			 group2.forEach(group => {
+                const radios = document.getElementsByName(group);
+                const isChecked = Array.from(radios).some(radio => radio.checked);
+                if (!isChecked) {
+                    errorMessages.push(`Please select a value for "${group}".`);
+                }
+            });
+
+            const errorOutput = document.getElementById('errorOutput');
+            if (errorMessages.length > 0) 
+			{
+                errorOutput.innerHTML = errorMessages.join('<br>');
+            } 
+			else 
+			{
+                errorOutput.innerHTML = ''; // Clear error messages
+				
+				let likelihoodSum = 0;
+				let impactSum = 0;
+				let likelihoodCount = 0;
+				let impactCount = 0;
+
+				// Calculate likelihood average
+				group1.forEach(group => {
+					const radios = document.getElementsByName(group);
+					const selectedRadio = Array.from(radios).find(radio => radio.checked);
+					likelihoodSum += parseInt(selectedRadio.value);
+					likelihoodCount++;
+				});
+
+				// Calculate impact average
+				group2.forEach(group => {
+					const radios = document.getElementsByName(group);
+					const selectedRadio = Array.from(radios).find(radio => radio.checked);
+					impactSum += parseInt(selectedRadio.value);
+					impactCount++;
+				});
+				
+				// Calculate averages
+				const averageLikelihood = likelihoodCount > 0 ? (likelihoodSum / likelihoodCount).toFixed(2) : "N/A";
+				const averageImpact = impactCount > 0 ? (impactSum / impactCount).toFixed(2) : "N/A";
+				
+				console.log(likelihoodCount); //working
+				console.log(impactCount); //working
+				console.log(likelihoodSum); 
+				console.log(impactSum);
+				console.log(averageLikelihood);
+				console.log(averageImpact);
+				
+				let averageRisk;
+				
+				if (averageImpact !== "N/A" && averageLikelihood !== "N/A") 
+				{
+					averageRisk = (parseFloat(averageImpact) * parseFloat(averageLikelihood)).toFixed(2);
+				} 
+				else 
+				{
+					averageRisk = "N/A";
+				}
+
+				// Display results
+				
+				const resultElement = document.getElementById("result");
+				if (averageLikelihood !== "N/A") 
+				{	
+					if (averageLikelihood >= 0 && averageLikelihood <= 1.0) {
+						resultElement.innerText = "Likelihood:Informative";
+						resultElement.className = "informative_likelihood_impact";
+					} 
+					else if (averageLikelihood > 1.1 && averageLikelihood <= 2.0) {
+						resultElement.innerText = "Likelihood: Low";
+						resultElement.className = "low_likelihood_impact"; 
+					} 
+					else if (averageLikelihood > 2.1 && averageLikelihood <= 3.0) {
+						resultElement.innerText = "Likelihood: Medium";
+						resultElement.className = "medium_likelihood_impact";
+					}
+					else if (averageLikelihood > 3.1 && averageLikelihood <= 4.0) {
+						resultElement.innerText = "Likelihood: High";
+						resultElement.className = "high_likelihood_impact";
+					}
+					else if (averageLikelihood > 4.1 && averageLikelihood <= 5.0) {
+						resultElement.innerText = "Likelihood: Critical";
+						resultElement.className = "critical_likelihood_impact";
+					}
+				}
+				else 
+				{
+					resultElement.innerText = "Likelihood";
+					resultElement.className = ""; // Clear any previous classes
+				}
+				
+				
+				const result2Element = document.getElementById("result2");
+				if (averageImpact !== "N/A") 
+				{	
+					if (averageImpact >= 0 && averageImpact <= 1.0) {
+						result2Element.innerText = "Impact: Informative";
+						result2Element.className = "informative_likelihood_impact";
+					} 
+					else if (averageImpact > 1.1 && averageImpact <= 2.0) {
+						result2Element.innerText = "Impact: Low";
+						result2Element.className = "low_likelihood_impact"; 
+					} 
+					else if (averageImpact > 2.1 && averageImpact <= 3.0) {
+						result2Element.innerText = "Impact: Medium";
+						result2Element.className = "medium_likelihood_impact";
+					}
+					else if (averageImpact > 3.1 && averageImpact <= 4.0) {
+						result2Element.innerText = "Impact: High";
+						result2Element.className = "high_likelihood_impact";
+					}
+					else if (averageImpact > 4.1 && averageImpact <= 5.0) {
+						result2Element.innerText = "Impact: Critical";
+						result2Element.className = "critical_likelihood_impact";
+					}
+				}
+				else 
+				{
+					result2Element.innerText = "Impact";
+					result2Element.className = ""; // Clear any previous classes
+				}
+
+				const result3Element = document.getElementById("result3");
+				
+				if (averageRisk !== "N/A") 
+				{	
+					if (averageRisk >= 0 && averageRisk <= 5.0) {
+						result3Element.innerText = "Risk: Informative";
+						result3Element.className = "informative";
+					} 
+					else if (averageRisk > 5.1 && averageRisk <= 10.0) {
+						result3Element.innerText = "Risk: Low";
+						result3Element.className = "low"; 
+					} 
+					else if (averageRisk > 10.1 && averageRisk <= 15.0) {
+						result3Element.innerText = "Risk: Medium";
+						result3Element.className = "medium";
+					}
+					else if (averageRisk > 15.1 && averageRisk <= 20.0) {
+						result3Element.innerText = "Risk: High";
+						result3Element.className = "high";
+					}
+					else if (averageRisk > 20.1 && averageRisk <= 25.0) {
+						result3Element.innerText = "Risk: Critical";
+						result3Element.className = "critical";
+					}
+				}
+				else 
+				{
+					result3Element.innerText = "Risk: N/A";
+					result3Element.className = ""; // Clear any previous classes
+				}
+            }
+        }
+
+        // You may want to bind the validateForm function to a form submit button
+        // For example:
+        document.addEventListener('DOMContentLoaded', () => {
+            const submitButton = document.createElement('button');
+            submitButton.innerText = "Submit";
+            submitButton.onclick = validateForm;
+			submitButton.style.display = 'block'; // Make the button a block element
+			submitButton.style.margin = '0 auto'; // Center it horizontally
+			submitButton.style.color = 'black';
+			submitButton.style.color = 'black';
+			submitButton.style.backgroundcolor = 'white';
+			submitButton.style.fontSize= '2em';
+            document.body.appendChild(submitButton);
+        });
+    </script>
+</body>
+</html>
