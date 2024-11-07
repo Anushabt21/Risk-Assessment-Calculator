@@ -571,23 +571,23 @@
 						<span class="tooltiptext">The extent to which the activities can be traced and recognise the responsible entity that can arise from the exploit of the risk.</span>
 					</h4>
                     <div class="buttonContainer">
-                        <label class="tooltip"><input type="radio" name="Loss of Reputation" value="1" class="valueRadio">
+                        <label class="tooltip"><input type="radio" name="Loss of Accountability" value="1" class="valueRadio">
 							<span class="radioLabel lowcheck">None</span>
 							<span class="tooltiptext lowop">No impact; all actions and events are fully logged and attributable.</span>
 						</label><br>
-                        <label class="tooltip"><input type="radio" name="Loss of Reputation" value="2" class="valueRadio">
+                        <label class="tooltip"><input type="radio" name="Loss of Accountability" value="2" class="valueRadio">
 							<span class="radioLabel medlowcheck">Very Low</span>
 							<span class="tooltiptext medlowop">Minor gaps in tracking, with minimal impact on accountability.</span>
 						</label><br>
-						<label class="tooltip"><input type="radio" name="Loss of Reputation" value="3" class="valueRadio">
-							<span class="radioLabel mediumcheck">Moderate</span>
+						<label class="tooltip"><input type="radio" name="Loss of Accountability" value="3" class="valueRadio">
+							<span class="radioLabel mediumcheck">Low</span>
 							<span class="tooltiptext mediumop">Limited logging issues, with some risk of untraceable actions but no critical gaps.</span>
 						</label><br>
-                        <label class="tooltip"><input type="radio" name="Loss of Reputation" value="4" class="valueRadio">
+                        <label class="tooltip"><input type="radio" name="Loss of Accountability" value="4" class="valueRadio">
 							<span class="radioLabel highmedcheck">Moderate</span>
 							<span class="tooltiptext highmedop">Noticeable gaps in tracking, impacting attribution and traceability of certain actions.</span>
 						</label><br>
-                        <label class="tooltip"><input type="radio" name="Loss of Reputation" value="5" class="valueRadio">
+                        <label class="tooltip"><input type="radio" name="Loss of Accountability" value="5" class="valueRadio">
 							<span class="radioLabel highcheck">High</span>
 							<span class="tooltiptext highop">Major accountability loss; extensive gaps in logging, making actions untraceable.</span>
 						</label>
@@ -710,8 +710,8 @@
 
 
     <div class="summary">
-        <p id="result"></p>
-        <p id="result2"></p>
+        <!-- p id="result"></p> -->
+        <!-- p id="result2"></p> -->
 		<p id="result3"></p>
     </div>
 	
@@ -734,7 +734,7 @@
                 'Loss of Confidentiality',
                 'Loss of Integrity',
                 'Loss of Availability',
-                'Loss of Reputation',
+                'Loss of Accountability',
                 'Financial Damage',
                 'Reputation Damage',
                 'Non-Compliance',
@@ -793,13 +793,6 @@
 				const averageLikelihood = likelihoodCount > 0 ? (likelihoodSum / likelihoodCount).toFixed(2) : "N/A";
 				const averageImpact = impactCount > 0 ? (impactSum / impactCount).toFixed(2) : "N/A";
 				
-				console.log(likelihoodCount); //working
-				console.log(impactCount); //working
-				console.log(likelihoodSum); 
-				console.log(impactSum);
-				console.log(averageLikelihood);
-				console.log(averageImpact);
-				
 				let averageRisk;
 				
 				if (averageImpact !== "N/A" && averageLikelihood !== "N/A") 
@@ -812,27 +805,39 @@
 				}
 
 				// Display results
+				console.log("~~~~~~~~~~~~~~~~~~~",);
+				console.log("~~~~~ Values ~~~~~~",);
+				console.log("~~~~~~~~~~~~~~~~~~~",);
+				console.log("Likelihood Count: ",likelihoodCount); //working
+				console.log("Impact Count: ", impactCount); //working
+				console.log("		~~~		");
+				console.log("Likelihood Sum: ", likelihoodSum); 
+				console.log("Impact Sum: ", impactSum);
+				console.log("		~~~		");
+				console.log("Average Likelihood: ", averageLikelihood);
+				console.log("Average Impact: ", averageImpact);
+				console.log("Average Risk: ", averageRisk);																										   
 				
-				const resultElement = document.getElementById("result");
+				/*const resultElement = document.getElementById("result");
 				if (averageLikelihood !== "N/A") 
 				{	
 					if (averageLikelihood >= 0 && averageLikelihood <= 1.0) {
 						resultElement.innerText = "Likelihood:Informative";
 						resultElement.className = "informative_likelihood_impact";
 					} 
-					else if (averageLikelihood > 1.1 && averageLikelihood <= 2.0) {
+					else if (averageLikelihood >= 1.1 && averageLikelihood <= 2.0) {
 						resultElement.innerText = "Likelihood: Low";
 						resultElement.className = "low_likelihood_impact"; 
 					} 
-					else if (averageLikelihood > 2.1 && averageLikelihood <= 3.0) {
+					else if (averageLikelihood >= 2.1 && averageLikelihood <= 3.0) {
 						resultElement.innerText = "Likelihood: Medium";
 						resultElement.className = "medium_likelihood_impact";
 					}
-					else if (averageLikelihood > 3.1 && averageLikelihood <= 4.0) {
+					else if (averageLikelihood >= 3.1 && averageLikelihood <= 4.0) {
 						resultElement.innerText = "Likelihood: High";
 						resultElement.className = "high_likelihood_impact";
 					}
-					else if (averageLikelihood > 4.1 && averageLikelihood <= 5.0) {
+					else if (averageLikelihood >= 4.1 && averageLikelihood <= 5.0) {
 						resultElement.innerText = "Likelihood: Critical";
 						resultElement.className = "critical_likelihood_impact";
 					}
@@ -851,19 +856,19 @@
 						result2Element.innerText = "Impact: Informative";
 						result2Element.className = "informative_likelihood_impact";
 					} 
-					else if (averageImpact > 1.1 && averageImpact <= 2.0) {
+					else if (averageImpact >= 1.1 && averageImpact <= 2.0) {
 						result2Element.innerText = "Impact: Low";
 						result2Element.className = "low_likelihood_impact"; 
 					} 
-					else if (averageImpact > 2.1 && averageImpact <= 3.0) {
+					else if (averageImpact >= 2.1 && averageImpact <= 3.0) {
 						result2Element.innerText = "Impact: Medium";
 						result2Element.className = "medium_likelihood_impact";
 					}
-					else if (averageImpact > 3.1 && averageImpact <= 4.0) {
+					else if (averageImpact >= 3.1 && averageImpact <= 4.0) {
 						result2Element.innerText = "Impact: High";
 						result2Element.className = "high_likelihood_impact";
 					}
-					else if (averageImpact > 4.1 && averageImpact <= 5.0) {
+					else if (averageImpact >= 4.1 && averageImpact <= 5.0) {
 						result2Element.innerText = "Impact: Critical";
 						result2Element.className = "critical_likelihood_impact";
 					}
@@ -872,7 +877,7 @@
 				{
 					result2Element.innerText = "Impact";
 					result2Element.className = ""; // Clear any previous classes
-				}
+				}*/
 
 				const result3Element = document.getElementById("result3");
 				
@@ -882,19 +887,19 @@
 						result3Element.innerText = "Risk: Informative";
 						result3Element.className = "informative";
 					} 
-					else if (averageRisk > 5.1 && averageRisk <= 10.0) {
+					else if (averageRisk >= 5.1 && averageRisk <= 10.0) {
 						result3Element.innerText = "Risk: Low";
 						result3Element.className = "low"; 
 					} 
-					else if (averageRisk > 10.1 && averageRisk <= 15.0) {
+					else if (averageRisk >= 10.1 && averageRisk <= 15.0) {
 						result3Element.innerText = "Risk: Medium";
 						result3Element.className = "medium";
 					}
-					else if (averageRisk > 15.1 && averageRisk <= 20.0) {
+					else if (averageRisk >= 15.1 && averageRisk <= 20.0) {
 						result3Element.innerText = "Risk: High";
 						result3Element.className = "high";
 					}
-					else if (averageRisk > 20.1 && averageRisk <= 25.0) {
+					else if (averageRisk >= 20.1 && averageRisk <= 25.0) {
 						result3Element.innerText = "Risk: Critical";
 						result3Element.className = "critical";
 					}
