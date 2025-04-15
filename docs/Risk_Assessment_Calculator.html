@@ -797,7 +797,7 @@
 				
 				if (averageImpact !== "N/A" && averageLikelihood !== "N/A") 
 				{
-					averageRisk = (parseFloat(averageImpact) * parseFloat(averageLikelihood)).toFixed(2);
+					averageRisk = (parseFloat(averageImpact) * parseFloat(averageLikelihood)).toFixed(1);
 				} 
 				else 
 				{
@@ -880,27 +880,26 @@
 				}*/
 
 				const result3Element = document.getElementById("result3");
-				const roundAverageRisk = averageRisk.toFixed(1);
 				
 				if (averageRisk !== "N/A") 
 				{	
-					if (roundAverageRisk >= 0 && roundAverageRisk <= 5.0) {
+					if (averageRisk >= 0 && averageRisk <= 5.0) {
 						result3Element.innerText = "Risk: Informative";
 						result3Element.className = "informative";
 					} 
-					else if (roundAverageRisk >= 5.1 && roundAverageRisk <= 10.0) {
+					else if (averageRisk >= 5.1 && averageRisk <= 10.0) {
 						result3Element.innerText = "Risk: Low";
 						result3Element.className = "low"; 
 					} 
-					else if (roundAverageRisk >= 10.1 && roundAverageRisk <= 15.0) {
+					else if (averageRisk >= 10.1 && averageRisk <= 15.0) {
 						result3Element.innerText = "Risk: Medium";
 						result3Element.className = "medium";
 					}
-					else if (roundAverageRisk >= 15.1 && roundAverageRisk <= 20.0) {
+					else if (averageRisk >= 15.1 && averageRisk <= 20.0) {
 						result3Element.innerText = "Risk: High";
 						result3Element.className = "high";
 					}
-					else if (roundAverageRisk >= 20.1 && roundAverageRisk <= 25.0) {
+					else if (averageRisk >= 20.1 && averageRisk <= 25.0) {
 						result3Element.innerText = "Risk: Critical";
 						result3Element.className = "critical";
 					}
